@@ -1,99 +1,74 @@
 import React from "react";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, LineChart, Line, PieChart, Pie, Cell, ResponsiveContainer, CartesianGrid, LabelList } from "recharts";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  ResponsiveContainer,
+  LabelList
+} from "recharts";
 
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
-
-const PlayerStats = ({ nameList, totalPoints, averagePoints, totalMatches, winnerCounts, loserCounts }) => {
-  // Transform Data for Charts
-  const chartData = nameList.map((name, index) => ({
-    name,
-    totalPoints: Number(totalPoints[index]) || 0,
-    avgPoints: Number(averagePoints[index]) || 0,
-    totalMatches: Number(totalMatches[index]) || 0,
-  }));
-
-  // Data for Win/Loss Horizontal Bar Chart
-  const winLossData = winnerCounts.map((winner) => {
-    const loser = loserCounts.find(loser => loser.name === winner.name) || { count: 0 };
-    return { name: winner.name, wins: winner.count, losses: loser.count };
-  });
-
+const CustomBarChart = ({ data, title, color }) => {
+  const sortedData = [...data].sort((a, b) => b.value - a.value);
   return (
-    <div className="container">
-      <h2>Player Stats Visualization</h2>
-
-      {/* Bar Chart: Total Points */}
-      <h3>Total Points per Player</h3>
-      <ResponsiveContainer width="100%" height={350}>
-        <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+    <div className="mb-10 px-[15%] w-[70%] mx-auto">
+      <h2 className="text-center text-xl font-bold mb-4 header-title">{title}</h2>
+      <ResponsiveContainer width="80%" height={400}>
+        <BarChart data={sortedData} layout="vertical" margin={{ right: 100 }}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
+          <XAxis type="number" tick={{ fontWeight: "bold" }} />
+          <YAxis
+            dataKey="name"
+            type="category"
+            width={250}
+            interval={0} 
+            tick={{ dx: -10, fontSize: 14, fontWeight: "bold" }}
+          />
           <Tooltip />
-          <Legend />
-          <Bar dataKey="totalPoints" fill="#8884d8">
-            <LabelList dataKey="totalPoints" position="top" />
+          <Bar dataKey="value" fill={color} radius={[5, 5, 0, 0]}>
+            <LabelList dataKey="value" position="right" style={{ fontWeight: "bold" }} />
           </Bar>
         </BarChart>
       </ResponsiveContainer>
+    </div>
+  );
+};
 
-      {/* Line Chart: Average Points */}
-      <h3>Average Points per Match</h3>
-      <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Line type="monotone" dataKey="avgPoints" stroke="#82ca9d" />
-        </LineChart>
-      </ResponsiveContainer>
+const PlayerStats = ({ extractedNames, totalPoints, averagePoints, totalMatches, winnerCounts, loserCounts }) => {
+  const totalPointData = extractedNames.map((name, index) => ({
+    name,
+    value: Number(totalPoints[index]) || 0,
+  }));
 
-    {/* Pie Chart: Total Matches */}
-<h3>Total Matches per Player</h3>
-<ResponsiveContainer width="100%" height={600}>  {/* Increased height */}
-  <PieChart>
-    <Pie
-      data={chartData}
-      dataKey="totalMatches"
-      nameKey="name"
-      cx="50%"
-      cy="50%"
-      outerRadius={180}  // Increased outer radius
-      fill="#8884d8"
-      label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)})`}
-    >
-      {chartData.map((_, index) => (
-        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-      ))}
-    </Pie>
-    <Tooltip />
-  </PieChart>
-</ResponsiveContainer>
+  const averagePointData = extractedNames.map((name, index) => ({
+    name,
+    value: Number(averagePoints[index]) || 0,
+  }));
 
-{/* Horizontal Bar Chart: Winner & Loser Count */}
-<h3>Winner & Loser Count</h3>
-<ResponsiveContainer width="100%" height={500}>
-  <BarChart
-    data={winLossData}
-    layout="vertical"
-    margin={{ top: 20, right: 30, left: 50, bottom: 20 }} // Added bottom margin
-    barCategoryGap={15} // Increases space between bars
-  >
-    <CartesianGrid strokeDasharray="3 3" />
-    <XAxis type="number" />
-    <YAxis dataKey="name" type="category" />
-    <Tooltip />
-    <Legend />
-    <Bar dataKey="wins" fill="#4CAF50" stackId="a" barSize={20}> {/* Adjust barSize */}
-      <LabelList dataKey="wins" position="right" />
-    </Bar>
-    <Bar dataKey="losses" fill="#F44336" stackId="a" barSize={20}> {/* Adjust barSize */}
-      <LabelList dataKey="losses" position="right" />
-    </Bar>
-  </BarChart>
-</ResponsiveContainer>
+  const totalMatchData = extractedNames.map((name, index) => ({
+    name,
+    value: Number(totalMatches[index]) || 0,
+  }));
 
+  const winnerData = winnerCounts.map(({ name, count }) => ({
+    name,
+    value: count,
+  }));
+
+  const loserData = loserCounts.map(({ name, count }) => ({
+    name,
+    value: count,
+  }));
+
+  return (
+    <div className="p-4 max-w-5xl mx-auto space-y-10 font-[Poppins]">
+      <CustomBarChart data={totalPointData} title="Total Score per Player" color="#22c55e" />
+      <CustomBarChart data={averagePointData} title="Average Points per Player" color="#facc15" />
+      <CustomBarChart data={totalMatchData} title="Total Matches per player" color="#3b82f6" />
+      <CustomBarChart data={winnerData} title="Total Victories per Player" color="#22c55e" />
+      <CustomBarChart data={loserData} title="Total Defeats per Player" color="#ef4444" />
     </div>
   );
 };

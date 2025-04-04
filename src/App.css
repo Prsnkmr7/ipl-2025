@@ -1,5 +1,25 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+body {
+  font-family: 'Poppins', sans-serif;
+}
+
 .App {
   text-align: center;
+}
+
+.headr{
+  font-family: "CustomFont";
+  text-align: center;
+}
+
+.header-title{
+  text-align: center;
+  background: #009aff;
+  color: white;
+  padding: 10px 0;
+  font-weight: 500;
 }
 
 .App-logo {
@@ -7,6 +27,44 @@
   pointer-events: none;
 }
 
+.page-title{
+  justify-content: center;
+  display: flex;
+}
+.page-title img{
+  height: 150px;
+  width:150px;
+}
+
+.width-50{
+  width:calc(50% - 2px);
+  margin-bottom: 20px;
+  margin-right:2px;
+  display: inline-block;
+}
+
+.winner-table{
+  display: flex;
+  justify-content: center;
+}
+.winner-table img{
+  width:175px;
+  justify-content: center;
+}
+.name,.point{
+  font-size: 40px;
+  color: green;
+  font-weight: 600;
+  text-align: center;
+}
+.point-parent{
+  display: flex;
+  align-items: center;
+}
+
+.looser .name, .looser .point{
+  color:red;
+}
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;

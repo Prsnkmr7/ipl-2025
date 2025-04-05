@@ -18,7 +18,6 @@ function App() {
           "https://script.google.com/macros/s/AKfycbyBQvtMUDUrslnACV_QyIANxRmDgVPJPO7mouqv3VIYDedf7KXAJMObM91ihy7AKW8x/exec"
         );
         const text = await response.json();
-        console.log(text)
         setData(text);
 
         const extractedNames = text[8].slice(5, 18);
@@ -38,13 +37,24 @@ function App() {
         let losers = text.slice(9, 83).map(row => row[19]).filter(name => name && name !== "#N/A");
 
         let winnerCountsMap = {};
-        winners.forEach(name => {
-          winnerCountsMap[name] = (winnerCountsMap[name] || 0) + 1;
+
+        winners.forEach(entry => {
+          // Split names by comma and trim spaces
+          entry.split(",").map(name => name.trim()).forEach(name => {
+            if (name) {
+              winnerCountsMap[name] = (winnerCountsMap[name] || 0) + 1;
+            }
+          });
         });
 
         let loserCountsMap = {};
-        losers.forEach(name => {
-          loserCountsMap[name] = (loserCountsMap[name] || 0) + 1;
+
+        losers.forEach(entry => {
+          entry.split(",").map(name => name.trim()).forEach(name => {
+            if (name) {
+              loserCountsMap[name] = (loserCountsMap[name] || 0) + 1;
+            }
+          });
         });
 
         extractedNames.forEach(name => {
